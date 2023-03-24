@@ -1,27 +1,38 @@
 from tkinter import *
 import pandas
 import random
+import json
 
 BACKGROUND_COLOR = "#B1DDC6"
 current_card = {}
 to_learn = {}
 
+## GERMAN VERSION BELOW
+
 try:
-    data = pandas.read_csv("data/words_to_learn.csv")
+    data = open("data/to_learn.json")
 except FileNotFoundError:
-    #original_data = pandas.read_csv("data/french_words.csv")
-    original_data = pandas.read_csv("data/german_words.csv")
-    to_learn = original_data.to_dict(orient="records")
+    file = open("data/german_words.json")
+    to_learn = json.load(file)
 else:
-    to_learn = data.to_dict(orient="records")
+    to_learn = json.load(data)
+
+## FRENCH VERSION BELOW
+# try:
+#     data = pandas.read_csv("data/words_to_learn.csv")
+# except FileNotFoundError:
+#     original_data = pandas.read_csv("data/french_words.csv")
+#     to_learn = original_data.to_dict(orient="records")
+# else:
+#     to_learn = data.to_dict(orient="records")
 
 
 def next_card():
     global current_card, flip_timer
     window.after_cancel(flip_timer)
     current_card = random.choice(to_learn)
-    #canvas.itemconfig(card_title, text="French", fill="black")
-    #canvas.itemconfig(card_word, text=current_card["French"], fill="black")
+    # canvas.itemconfig(card_title, text="French", fill="black")
+    # canvas.itemconfig(card_word, text=current_card["French"], fill="black")
     canvas.itemconfig(card_title, text="German", fill="black")
     canvas.itemconfig(card_word, text=current_card["German"], fill="black")
     canvas.itemconfig(card_background, image=card_front_img)
@@ -37,8 +48,12 @@ def flip_card():
 def is_known():
     to_learn.remove(current_card)
     print(len(to_learn))
-    data = pandas.DataFrame(to_learn)
-    data.to_csv("data/words_to_learn.csv", index=False)
+    #FRENCH VERSION BELOW
+    # data = pandas.DataFrame(to_learn)
+    # data.to_csv("data/words_to_learn.csv", index=False)
+    #GERMAN VERSION BELOW
+    file_to_learn = open("data/to_learn.json", "w+")
+    file_to_learn.write(json.dumps(to_learn))
     next_card()
 
 
